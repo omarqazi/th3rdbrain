@@ -1,14 +1,19 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 )
 
-func main() {
-	http.Handle("/", http.FileServer(http.Dir(".")))
+var serverDirectory = flag.String("dir", ".", "Specify a filesystem path for the server root")
+var serverPort = flag.String("port", ":8080", "Specify an address to serve at")
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+func main() {
+	root := http.Dir(serverDirectory)
+	http.Handle("/", http.FileServer(root))
+
+	if err := http.ListenAndServe(serverPort, nil); err != nil {
 		fmt.Println("Error starting server:", err)
 	}
 }
